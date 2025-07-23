@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="./images/favicon-32x32.png"
+    />
+    <title>GeoTrace - IP Address Tracker</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Rubik:400,500,700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="header">
+      <h1 class="title">GeoTrace</h1>
+      <form class="search-bar" id="search-form" autocomplete="off">
+        <input
+          type="text"
+          class="search-input"
+          id="search-input"
+          placeholder="Search for any IP address or domain"
+          aria-label="Search for any IP address or domain"
+          required
+        />
+        <button type="submit" class="search-btn" aria-label="Search">
+          <img src="./images/icon-arrow.svg" alt="Search" />
+        </button>
+      </form>
+    </header>
+    <section class="results-card" id="results-card">
+      <div class="result-column">
+        <span class="result-label">IP Address</span>
+        <span class="result-value" id="ip-address">-</span>
+      </div>
+      <div class="result-column">
+        <span class="result-label">Location</span>
+        <span class="result-value" id="location">-</span>
+      </div>
+      <div class="result-column">
+        <span class="result-label">Timezone</span>
+        <span class="result-value" id="timezone">-</span>
+      </div>
+      <div class="result-column">
+        <span class="result-label">ISP</span>
+        <span class="result-value" id="isp">-</span>
+      </div>
+    </section>
+    <main>
+      <div id="map" class="map-container"></div>
+    </main>
+    <footer>
+      <div class="attribution">
+        Built by
+        <a href="https://github.com/AdolehSamuel" target="_blank"
+          >Adoleh Samuel</a
+        >.
+      </div>
+      <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+      <script src="script.js"></script>
+    </footer>
+  </body>
+</html>
