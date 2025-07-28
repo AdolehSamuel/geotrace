@@ -1,5 +1,4 @@
-const API_KEY = "";
-const API_URL = "https://geo.ipify.org/api/v2/country,city?apiKey=" + API_KEY;
+const API_URL = "https://geotrace-proxy.onrender.com/api/lookup";
 
 const ipAddressEl = document.getElementById("ip-address");
 const locationEl = document.getElementById("location");
@@ -42,13 +41,10 @@ function updateMap(lat, lng) {
 async function fetchIPData(query = "") {
   let url = API_URL;
   if (query) {
-    url += `&domain=${encodeURIComponent(query)}`;
-    if (/^\d+\.\d+\.\d+\.\d+$/.test(query)) {
-      url += `&ipAddress=${encodeURIComponent(query)}`;
-    }
+    url += `?ip=${encodeURIComponent(query)}`;
   }
   try {
-    const res = await fetch(url);
+    const res = await fetch(url, { mode: "cors" });
     if (!res.ok) throw new Error("Failed to fetch");
     const data = await res.json();
     updateResults(data);
@@ -59,18 +55,16 @@ async function fetchIPData(query = "") {
   }
 }
 
-if (API_KEY) {
-  // On page load, fetch user's IP/location
-  window.addEventListener("DOMContentLoaded", () => {
-    fetchIPData();
-  });
+// On page load, fetch user's IP/location
+window.addEventListener("DOMContentLoaded", () => {
+  fetchIPData();
+});
 
-  // Handle search
-  searchForm.addEventListener("submit", e => {
-    e.preventDefault();
-    const query = searchInput.value.trim();
-    if (query) {
-      fetchIPData(query);
-    }
-  });
-}
+// Handle search
+searchForm.addEventListener("submit", e => {
+  e.preventDefault();
+  const query = searchInput.value.trim();
+  if (query) {
+    fetchIPData(query);
+  }
+});
