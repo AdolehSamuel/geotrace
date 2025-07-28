@@ -9,6 +9,25 @@ const searchInput = document.getElementById("search-input");
 
 let map, marker;
 
+const errorEl = document.createElement("div");
+errorEl.id = "error-message";
+errorEl.style.color = "#d32f2f";
+errorEl.style.margin = "10px 0";
+errorEl.style.fontWeight = "500";
+errorEl.setAttribute("role", "alert");
+searchForm.parentNode.insertBefore(errorEl, searchForm.nextSibling);
+errorEl.style.display = "none";
+
+function showError(message) {
+  errorEl.textContent = message;
+  errorEl.style.display = "block";
+}
+
+function hideError() {
+  errorEl.textContent = "";
+  errorEl.style.display = "none";
+}
+
 // Helper to update the results card
 function updateResults(data) {
   ipAddressEl.textContent = data.ip || "-";
@@ -43,15 +62,37 @@ async function fetchIPData(query = "") {
   if (query) {
     url += `?ip=${encodeURIComponent(query)}`;
   }
+  hideError();
   try {
     const res = await fetch(url, { mode: "cors" });
-    if (!res.ok) throw new Error("Failed to fetch");
+    if (!res.ok) {
+      let errorMsg = "Unknown error occurred.";
+      if (res.status === 400) {
+        errorMsg = "Invalid IP address or domain. Please check your input.";
+      } else if (res.status === 429) {
+        errorMsg = "API rate limit exceeded. Please wait and try again later.";
+      } else if (res.status >= 500) {
+        errorMsg = "Server error. Please try again later.";
+      }
+      updateResults({ ip: "Not found", location: null, isp: "", timezone: "" });
+      showError(errorMsg);
+      return;
+    }
     const data = await res.json();
+    if (!data || !data.location) {
+      updateResults({ ip: "Not found", location: null, isp: "", timezone: "" });
+      showError("No data found for this IP or domain. Try another input.");
+      return;
+    }
     updateResults(data);
     updateMap(data.location.lat, data.location.lng);
   } catch (err) {
     updateResults({ ip: "Not found", location: null, isp: "", timezone: "" });
-    alert("Could not retrieve data. Please check your input or try again.");
+    if (err.name === "TypeError") {
+      showError("Network error. Please check your internet connection.");
+    } else {
+      showError("Unexpected error. Please try again.");
+    }
   }
 }
 
@@ -68,3 +109,4 @@ searchForm.addEventListener("submit", e => {
     fetchIPData(query);
   }
 });
+searchInput.addEventListener("input", hideError);
